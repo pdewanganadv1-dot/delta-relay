@@ -1,0 +1,30 @@
+# Fallback host if Railway is unavailable: Render -> New -> Blueprint -> pick this repo.
+# NOTE: Render's free web service sleeps after 15 min idle and takes ~30-50 s to wake, which is longer than
+# TradingView's webhook timeout. Use the Starter plan (always on) or ping /health every 5 min with a free
+# uptime monitor (e.g. UptimeRobot) to keep the free instance awake.
+services:
+  - type: web
+    name: delta-relay
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: RELAY_TOKEN
+        sync: false
+      - key: DELTA_API_KEY
+        sync: false
+      - key: DELTA_API_SECRET
+        sync: false
+      - key: DELTA_BASE_URL
+        value: https://cdn-ind.testnet.deltaex.org
+      - key: DRY_RUN
+        value: "1"
+      - key: STOP_TRIGGER
+        value: mark_price
+      - key: MAX_QTY
+        value: BTCUSD=12,ETHUSD=40,XAUTUSD=200
+      - key: ALLOWED_SYMBOLS
+        value: BTCUSD,ETHUSD,XAUTUSD
+      - key: LOG_DIR
+        value: /app/logs
